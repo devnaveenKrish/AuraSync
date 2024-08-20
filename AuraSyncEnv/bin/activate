@@ -35,7 +35,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Volumes/University/Mini Project/AuraSync/AuraSyncEnv"
+VIRTUAL_ENV="/Volumes/University/Mini Project/Git/AuraSync/AuraSyncEnv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

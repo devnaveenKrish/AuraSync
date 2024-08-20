@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Volumes/University/Mini Project/AuraSync/AuraSyncEnv"
+set -gx VIRTUAL_ENV "/Volumes/University/Mini Project/Git/AuraSync/AuraSyncEnv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH
