@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 <head>
@@ -35,6 +36,20 @@
 
     <!-- home
     ================================================== -->
+    {% comment %} ANALYSIS CODE FOR JAVASCRIPT {% endcomment %}
+
+    <video id="webcam" autoplay></video>
+<script>
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+      document.getElementById('webcam').srcObject = stream;
+    });
+</script>
+
+
+
+
+
     <main class="s-home s-home--particles">
 
         <div id="particles-js" class="home-particles"></div>
@@ -58,6 +73,7 @@
                     We are currently working <br>
                     on a new super awesome <br> website.
                     </h1>
+                    <a href='#'> Scan Your Face</a> 
 
                     <p>
                     Nulla porttitor accumsan tincidunt. Nulla quis lorem ut libero malesuada feugiat. 

@@ -1,6 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
+from django.http import StreamingHttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.http import JsonResponse
+
 
 def index(request):
     return render(request, 'User/index.html')
@@ -11,7 +14,6 @@ def user_login(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None and user.is_active:
-            print("Yes")
             login(request, user)
             return redirect(index)
         else:
@@ -42,3 +44,15 @@ def singup(request):
 
 def analysis(request):
     return render(request, 'User/analysis/analysis.html')
+
+# ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+# def capture_emotion(request):
+#     cap = cv2.VideoCapture(0)  # Open the webcam
+#     ret, frame = cap.read()  # Read a frame
+#     # emotion = predict_emotion(frame)  # Run frame through your model
+#     return JsonResponse({'emotion': emotion})
