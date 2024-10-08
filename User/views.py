@@ -2,7 +2,15 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.http import StreamingHttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+import os
+from deepface import DeepFace
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import cv2
+import numpy as np
+from PIL import Image
+import base64
+import io
 
 
 def index(request):
@@ -35,6 +43,9 @@ def singup(request):
         password = request.POST.get('password')
         cpassword = request.POST.get('cpassword')
         if password == cpassword:
+            if User.objects.filter(username = username).exists():
+                msg = "Username already exists. Please try another one!"
+                return render(request, 'User/auth/singup.html', {'msg' : msg})
             user = User.objects.create_user(first_name = first_name, last_name = last_name, username = username, email = email)
             user.set_password(password)
             user.save()
@@ -45,14 +56,53 @@ def singup(request):
 def analysis(request):
     return render(request, 'User/analysis/analysis.html')
 
+
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+import base64
+from django.http import JsonResponse
+from deepface import DeepFace
+from django.views.decorators.csrf import csrf_exempt
+import numpy as np
+import cv2
+
+def decode_base64_image(base64_image):
+    # Check for the base64 prefix and strip it if present
+    if base64_image.startswith('data:image/png;base64,'):
+        base64_image = base64_image.split(',')[1]
+    img_data = base64.b64decode(base64_image)
+    np_img = np.frombuffer(img_data, np.uint8)  # Use frombuffer instead of fromstring
+    img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
+    return img
+
+@csrf_exempt
+def detect_facial_emotion(request):
+    if request.method == 'POST':
+        try:
+            # Get the image from POST data
+            image_data = request.POST.get('image')
+
+            if not image_data:
+                return JsonResponse({'error': 'No image data provided'}, status=400)
+
+            # Decode the image
+            img = decode_base64_image(image_data)
+
+            # Use DeepFace to detect emotion
+            result = DeepFace.analyze(img, actions=['emotion'])
+
+            # Extract the dominant emotion
+            emotion = result[0]['dominant_emotion']  # Updated to access the first result
+
+            # Return the emotion as JSON response
+            return JsonResponse({'emotion': emotion})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
+        
 
-# def capture_emotion(request):
-#     cap = cv2.VideoCapture(0)  # Open the webcam
-#     ret, frame = cap.read()  # Read a frame
-#     # emotion = predict_emotion(frame)  # Run frame through your model
-#     return JsonResponse({'emotion': emotion})

@@ -2,24 +2,73 @@
 {% load static %}
 {% block content %}
 
-
 <style>
-  video#webcam {
-    display: block;
-    width: 300%;
-    max-width: 600px;
-    height: 60vh;
-    margin: 0 auto;
-    margin-top: 50%;
+/* From Uiverse.io by coding-masala */ 
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 8em;
+}
+
+.loading-spinner-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-spinner-circle {
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  background-color: #db9334;
+  margin: 0 5px;
+  animation: loading-spinner 1s ease-in-out infinite;
+}
+
+.loading-spinner-circle:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-spinner-circle:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.loading-spinner-circle:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+.loading-spinner-circle:nth-child(5) {
+  animation-delay: 0.8s;
+}
+
+@keyframes loading-spinner {
+  0% {
+    transform: scale(1);
+    opacity: 1;
   }
+
+  20% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 </style>
 
-        <div class="s-intro__bg">
+                <div class="s-intro__bg">
             <video autoplay muted loop id="bg-video">
                 <source src="{% static 'User/video/bg_video_2.mp4' %}" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
         </div>
+
+
 
         <!-- # site-content
         ================================================== -->
@@ -32,65 +81,32 @@
 
                 <div class="s-intro__bg rellax" data-rellax-speed="-5"></div>
 
-                <div class="row s-contact__infos">
-
-                    <div class="row s-intro__content">
-
-                    <div class="column lg-12 s-intro__content-inner">
-                        <h3 class="s-intro__pretitle">We Are <span style="color:hsla(37, 95%, 47%, 1);">AuraSync</span>.</h3>
-                        <h1 class="s-intro__title">
-                        AI unveiling  <br>
-                        true <span style="color:hsla(37, 95%, 47%, 1);">Emotion</span>.
-                        </h1>	
-
-                        <div class="s-intro__more">
-                        {% if not user.is_authenticated %}
-                            <a class=" btn btn--stroke s-intro__more-btn" href="{% url 'user_login' %}">
-                                Login
-                            </a>
-                        {% else %}
-                            <a class=" btn btn--stroke s-intro__more-btn" href="{% url 'user_logout' %}">
-                                Logout
-                            </a>
-                        {% endif %}
-                        </div>	
-                    </div> <!-- s-intro__content-inner -->
-
-                </div> <!-- s-intro__content -->
-        
-                    <div class="column lg-3 md-6 stack-on-900 s-contact__block-social">
-                        <video id="webcam" autoplay></video>
-
-                    </div>
-        
-                    <div class="column lg-4 md-12 stack-on-900 s-contact__block-number">
-        
-                        <ul class="s-contact__list">
-                        </ul>
-                    </div>
-        
-                </div> <!-- end s-contact__infos -->
-
                 <div class="row s-intro__content">
 
                     <div class="column lg-12 s-intro__content-inner">
-                        <h3 class="s-intro__pretitle">We Are <span style="color:hsla(37, 95%, 47%, 1);">AuraSync</span>.</h3>
-                        <h1 class="s-intro__title">
+                        <h3 class="s-intro__pretitle">Keep smiling while <span style="color:hsla(37, 95%, 47%, 1);">AuraSync</span> is scanning your emotions.</h3>
+                        {% comment %} <h1 class="s-intro__title">
                         AI unveiling  <br>
                         true <span style="color:hsla(37, 95%, 47%, 1);">Emotion</span>.
-                        </h1>	
+                        </h1>	 {% endcomment %}
 
-                        <div class="s-intro__more">
-                        {% if not user.is_authenticated %}
-                            <a class=" btn btn--stroke s-intro__more-btn" href="{% url 'user_login' %}">
-                                Login
-                            </a>
-                        {% else %}
-                            <a class=" btn btn--stroke s-intro__more-btn" href="{% url 'user_logout' %}">
-                                Logout
-                            </a>
-                        {% endif %}
-                        </div>	
+<p>Emotion: <span id="emotion-output"></span></p>
+
+<center> 
+<br>
+<h3 class="s-intro__pretitle"><span style="color:hsla(37, 95%, 47%, 1);">ANALYSING</span>...</h3>
+<div class="loading-spinner">
+  <div class="loading-spinner-inner">
+    <div class="loading-spinner-circle"></div>
+    <div class="loading-spinner-circle"></div>
+    <div class="loading-spinner-circle"></div>
+    <div class="loading-spinner-circle"></div>
+    <div class="loading-spinner-circle"></div>
+  </div>
+</div>
+
+</center>
+
                     </div> <!-- s-intro__content-inner -->
 
                 </div> <!-- s-intro__content -->
@@ -140,7 +156,7 @@
 
             <!-- about
             ----------------------------------------------- -->
-            {% comment %} <section id="about" class="s-about target-section">
+            <section id="about" class="s-about target-section">
 
                 <div class="row s-about__content" data-animate-block>
                     <div class="column lg-12">
@@ -522,22 +538,62 @@
                     </div> <!-- end clients-outer -->
                 </div> <!-- end clients-block -->
 
-            </section> <!-- end portfolio --> {% endcomment %}
+            </section> <!-- end portfolio -->
 
             <!-- contact
             ----------------------------------------------- -->
 
-            <script>
-  // Access the front camera (facingMode: 'user')
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
-    .then(stream => {
-      const video = document.getElementById('webcam');
-      video.srcObject = stream; // Set the webcam stream to the video element
-    })
-    .catch(err => {
-      console.error('Error accessing the camera: ', err);
-    });
-</script>
+<script>
+        function sendImageToServer(imageData) {
+            const formData = new FormData();
+            formData.append('image', imageData);
+
+            // Send the image to the Django backend
+            fetch('detect-facial-emotion/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.emotion) {
+                    document.getElementById('emotion-output').innerText = data.emotion;
+                } else {
+                    console.error('Emotion not detected');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function captureImage() {
+            const video = document.createElement('video');
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+
+            // Start video stream
+            navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+                video.srcObject = stream;
+                video.play();
+
+                setInterval(() => {
+                    // Capture the current frame
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                    // Convert the captured image to base64
+                    const imageData = canvas.toDataURL('image/png').split(',')[1]; // Remove the base64 prefix
+
+                    // Send the image to the server
+                    sendImageToServer(imageData);
+                }, 5000); // Capture image every 5 seconds
+            });
+
+            
+        }
+
+        // Start capturing images
+        captureImage();
+    </script>
 
 
 {% endblock content %}

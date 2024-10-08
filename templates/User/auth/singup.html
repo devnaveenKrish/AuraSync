@@ -93,7 +93,11 @@
         <div class="row justify-content-center">
           <div class="col-lg-5 text-center mx-auto">
             <h1 class="text-white mb-2 mt-5">Welcome!</h1>
+            {% if msg %}
+              <p class="text-lead text-white">{{ msg }}</p>
+            {% else %}
             <p class="text-lead text-white">Our neural networks are ready to make sense of your emotions. Just remember, they’re still learning, so don't be surprised if they get a little ‘emotional’ about your registration!</p>
+            {% endif %}
           </div>
         </div>
       </div>

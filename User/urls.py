@@ -7,4 +7,5 @@ urlpatterns = [
     path('singup', views.singup, name="singup"), 
     path('user_logout', views.user_logout, name='user_logout'), 
     path('analysis', views.analysis, name='analysis'), 
+    path('detect-facial-emotion/', views.detect_facial_emotion, name='detect_facial_emotion'),
 ]
