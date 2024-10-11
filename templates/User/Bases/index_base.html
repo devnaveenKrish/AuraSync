@@ -72,6 +72,9 @@
                     <li><a href="#services" class="smoothscroll">Services</a></li>
                     <li><a href="#portfolio" class="smoothscroll">Works</a></li>
                     <li><a href="#contact" class="smoothscroll">Contact</a></li>
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url 'user_logout' %}">Logout</a></li>
+                    {% endif %}
                 </ul>
 
                 <p>

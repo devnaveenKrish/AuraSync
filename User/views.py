@@ -11,6 +11,7 @@ import numpy as np
 from PIL import Image
 import base64
 import io
+from .models import Emotion_analysis
 
 
 def index(request):
@@ -32,7 +33,7 @@ def user_login(request):
 
 def user_logout(request):
     logout(request)
-    return redirect('index')
+    return redirect(index)
 
 def singup(request):
     if request.method == "POST":
@@ -94,6 +95,12 @@ def detect_facial_emotion(request):
 
             # Extract the dominant emotion
             emotion = result[0]['dominant_emotion']  # Updated to access the first result
+            user = request.user
+            emotion_label = emotion
+            emotion_status = True
+            emotion_data = Emotion_analysis.objects.create(user=user, emotion_label=emotion_label, emotion_status=emotion_status)
+            emotion_data.save()
+            
 
             # Return the emotion as JSON response
             return JsonResponse({'emotion': emotion})

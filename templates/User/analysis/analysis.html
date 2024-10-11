@@ -92,6 +92,7 @@
 
 <p>Emotion: <span id="emotion-output"></span></p>
 
+
 <center> 
 <br>
 <h3 class="s-intro__pretitle"><span style="color:hsla(37, 95%, 47%, 1);">ANALYSING</span>...</h3>
@@ -104,7 +105,6 @@
     <div class="loading-spinner-circle"></div>
   </div>
 </div>
-
 </center>
 
                     </div> <!-- s-intro__content-inner -->
@@ -539,11 +539,16 @@
                 </div> <!-- end clients-block -->
 
             </section> <!-- end portfolio -->
+            
 
             <!-- contact
             ----------------------------------------------- -->
 
 <script>
+
+ let video = document.getElementById('webcam');
+        let stopButton = document.getElementById('stopButton');
+        let intervalId;
         function sendImageToServer(imageData) {
             const formData = new FormData();
             formData.append('image', imageData);
@@ -593,6 +598,20 @@
 
         // Start capturing images
         captureImage();
+
+
+        stopButton.addEventListener('click', function() {
+            clearInterval(intervalId);  // Stop capturing images
+            let stream = video.srcObject;
+            let tracks = stream.getTracks();
+
+            tracks.forEach(function(track) {
+                track.stop();  // Stop the webcam
+            });
+
+            video.srcObject = null;  // Clear the video source
+            console.log("Webcam stopped");
+        });
     </script>
 
 
