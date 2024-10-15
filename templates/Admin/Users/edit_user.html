@@ -1,0 +1,52 @@
+{% extends 'Admin/bases/admin_base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container-fluid py-4">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header pb-0">
+              <div class="d-flex align-items-center">
+                <p class="mb-0">Edit User</p>
+              </div>
+            </div>
+            <form method="POST">
+            {% csrf_token %}
+            <div class="card-body">
+              <div class="row">
+                
+                <div class="col-md-4">
+                  <div class="form-group"></label>
+                    <label for="example-text-input" class="form-control-label">Username</label>
+                    <input class="form-control" type="text" value="{{ usr.username }}" name="username" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">First Name</label>
+                    <input class="form-control" type="text" value="{{ usr.firstname }}" name="firstname" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Last Name</label>
+                    <input class="form-control" type="text" value="{{ usr.lastname }}" name="lastname" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Email</label>
+                    <input class="form-control" type="text" value="{{ usr.email }}" name="email" required>
+                  </div>
+                </div>
+                
+                </div>
+                <button type="SUBMIT" class="btn btn-dark btn-sm mb-3">Submit</button>
+              </div>
+            </div>
+            </form>
+          </div>
+        </div>
+        
+      </div>
+      {% endblock content %}

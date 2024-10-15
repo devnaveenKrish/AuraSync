@@ -16,18 +16,15 @@ class psychometric_question(models.Model):
 class Users_answers(models.Model):
     User_id = models.ForeignKey(User, on_delete=models.CASCADE)
     q1 = models.CharField(max_length=10)
-    q2 = models.CharField(max_length=10)
-    q3 = models.CharField(max_length=10)
-    q4 = models.CharField(max_length=10)
-    q5 = models.CharField(max_length=10)
-    q6 = models.CharField(max_length=10)
-    q7 = models.CharField(max_length=10)
-    q8 = models.CharField(max_length=10)
-    q9 = models.CharField(max_length=10)
-    q10 = models.CharField(max_length=10)
+    q2 = models.CharField(max_length=10, null=True)
+    q3 = models.CharField(max_length=10, null=True)
+    q4 = models.CharField(max_length=10, null=True)
+    q5 = models.CharField(max_length=10, null=True)
+    q6 = models.CharField(max_length=10, null=True)
+    q7 = models.CharField(max_length=10, null=True)
+    q8 = models.CharField(max_length=10, null=True)
+    q9 = models.CharField(max_length=10, null=True)
+    q10 = models.CharField(max_length=10, null=True)
     response_status = models.BooleanField(default=True)
-
-    def __str__(self):
-        return self.User_id
 
 

@@ -91,6 +91,28 @@ def edit_question(request, qn_id):
         return redirect(psychometric_questions)
     return render(request, 'Admin/psychometric_test/edit_questions.html', {'qn' : qn})
 
+def users_list(request):
+    users = User.objects.filter(is_active = True    )
+    return render(request,'Admin/Users/UserTable.html',{'users':users})
+
+def delete_user(request, user_id):
+    user = User.objects.get(id = user_id)
+    user.is_active = False
+    user.save()
+    return redirect(users_list)
+
+def edit_user (request,user_id):
+    user = User.objects.get(id = user_id)
+    if request.method == 'POST':
+        user.first_name = request.POST.get('firstname')
+        user.last_name = request.POST.get('lastname')
+        user.username = request.POST.get('username')
+        user.email= request.POST.get('email')
+        user.save()
+        return redirect(users_list)
+    return render(request, 'Admin/Users/edit_user.html', {'usr' : user})
+        
+
 
 
     

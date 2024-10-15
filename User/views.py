@@ -50,6 +50,7 @@ def singup(request):
             user = User.objects.create_user(first_name = first_name, last_name = last_name, username = username, email = email)
             user.set_password(password)
             user.save()
+            return redirect(user_login)
         else:
             return render(request, 'User/auth/singup.html', {'msg' : 'Looks like your neurons are not communicating enough. Please check the password and try again!'})
     return render(request, 'User/auth/singup.html')
@@ -67,6 +68,10 @@ from deepface import DeepFace
 from django.views.decorators.csrf import csrf_exempt
 import numpy as np
 import cv2
+import os
+from django.conf import settings
+from PIL import Image
+from io import BytesIO
 
 def decode_base64_image(base64_image):
     # Check for the base64 prefix and strip it if present
@@ -76,6 +81,20 @@ def decode_base64_image(base64_image):
     np_img = np.frombuffer(img_data, np.uint8)  # Use frombuffer instead of fromstring
     img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
     return img
+
+def save_image(image, user_id, emotion):
+    # Create the directory if it doesn't exist
+    save_dir = os.path.join(settings.MEDIA_ROOT, 'captured_images')
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
+    # Generate the filename using user ID and detected emotion
+    filename = f"{user_id}_{emotion}.png"
+    save_path = os.path.join(save_dir, filename)
+
+    # Save the image
+    image_pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))  # Convert to RGB for PIL
+    image_pil.save(save_path)
 
 @csrf_exempt
 def detect_facial_emotion(request):
@@ -94,13 +113,17 @@ def detect_facial_emotion(request):
             result = DeepFace.analyze(img, actions=['emotion'])
 
             # Extract the dominant emotion
-            emotion = result[0]['dominant_emotion']  # Updated to access the first result
-            user = request.user
+            emotion = result[0]['dominant_emotion']  # Access the first result
+            user = request.user  # Assuming the user is logged in
             emotion_label = emotion
             emotion_status = True
+
+            # Save emotion to database (your existing functionality)
             emotion_data = Emotion_analysis.objects.create(user=user, emotion_label=emotion_label, emotion_status=emotion_status)
             emotion_data.save()
-            
+
+            # Save the image with emotion and user ID as filename
+            save_image(img, user.id, emotion)  # Save image
 
             # Return the emotion as JSON response
             return JsonResponse({'emotion': emotion})
@@ -109,7 +132,6 @@ def detect_facial_emotion(request):
             return JsonResponse({'error': str(e)}, status=400)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
-
 
         
 

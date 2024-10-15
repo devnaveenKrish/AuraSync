@@ -10,6 +10,7 @@
         .question-container.active {
             display: block;
         }
+        
     </style>
 
 
@@ -34,7 +35,7 @@
                 <div class="row s-intro__content">
 
                     <div class="column lg-12 s-intro__content-inner">
-                        <h3 class="s-intro__pretitle">Instruction to read before the<span style="color:hsla(37, 95%, 47%, 1);"> Psychoemtric test</span>.</h3>
+                        
                         {% comment %} <h1 class="s-intro__title">
                         AI unveiling  <br>
                         true <span style="color:hsla(37, 95%, 47%, 1);">Emotion</span>.
@@ -47,40 +48,32 @@
                                 <div id="questions">
                                     {% for question in questions %}
                                     <div class="question-container" id="question-{{ forloop.counter }}">
-                                        <p>{{ question.question }}</p>
+                                    <center><h2 style="color:hsla(37, 95%, 47%, 1);"> Question {{ forloop.counter }} </h2></center> <br> <br>
+                                        <p class="s-intro__pretitle" style="color:hsla(37, 95%, 47%, 1);">{{ question.question }}</p>
                                         <div>
+                                        <ul>
                                             <label>
-                                                <input type="radio" name="question-{{ forloop.counter }}" value="{{ question.choice_1 }}" required> {{ question.option_1 }}
+                                                <input type="radio"  class="s-intro__pretitle" name="question-{{ forloop.counter }}" value=1 required> <span class="s-intro__pretitle" style="padding:10px;"> {{ question.choice_1 }} </span>
                                             </label><br>
                                             <label>
-                                                <input type="radio" name="question-{{ forloop.counter }}" value="{{ question.choice_2 }}"> {{ question.option_2 }}
+                                                <input type="radio" class="s-intro__pretitle" name="question-{{ forloop.counter }}" value=2> <span class="s-intro__pretitle" style="padding:10px;"> {{ question.choice_2 }} </span>
                                             </label><br>
                                             <label>
-                                                <input type="radio" name="question-{{ forloop.counter }}" value="{{ question.choice_3 }}"> {{ question.option_3 }}
+                                                <input type="radio" class="s-intro__pretitle" name="question-{{ forloop.counter }}" value=3> <span class="s-intro__pretitle" style="padding:10px;"> {{ question.choice_3 }} </span>
                                             </label><br>
                                             <label>
-                                                <input type="radio" name="question-{{ forloop.counter }}" value="{{ question.choice_4 }}"> {{ question.option_4 }}
+                                                <input type="radio" class="s-intro__pretitle" name="question-{{ forloop.counter }}" value=4> <span class="s-intro__pretitle" style="padding:10px;"> {{ question.choice_4 }}</span>
                                             </label><br>
+                                        </ul>
                                         </div>
                                         <button type="button" class="next-btn" data-question-id="{{ forloop.counter }}">Next</button>
                                     </div>
                                     {% endfor %}
                                 </div>
 
-                                <button id="submit-btn" type="submit" style="display:none;">Submit</button>
+                                <button id="submit-btn" type="submit" style="display:none;" onclick="alert('Your response have submitted successfully.')">Submit</button>
                             </form>
-
-                        <div class="s-intro__more">
-                        {% if not user.is_authenticated %}
-                            <a class=" btn btn--stroke s-intro__more-btn" href="{% url 'user_login' %}">
-                                Login
-                            </a>
-                        {% else %}
-                            <a class=" btn btn--stroke s-intro__more-btn" href="{% url 'analysis' %}">
-                                Take me to Magic
-                            </a>
-                        {% endif %}
-                        </div>	
+	
                     </div> <!-- s-intro__content-inner -->
 
                 </div> <!-- s-intro__content -->
@@ -149,13 +142,38 @@
                 }, 300); // Delay for fade effect
             }
         });
+    }); 
+    document.addEventListener('DOMContentLoaded', function() {
+        const nextButtons = document.querySelectorAll('.next-btn');
+        const submitButton = document.getElementById('submit-btn');
+        const totalQuestions = nextButtons.length;
+
+        nextButtons.forEach((button, index) => {
+            button.addEventListener('click', function() {
+                const currentQuestion = document.getElementById('question-' + (index + 1));
+                const nextQuestion = document.getElementById('question-' + (index + 2));
+
+                // Hide the current question and its "Next" button if it's not the last one
+                if (index + 1 < totalQuestions) {
+                    currentQuestion.style.display = 'none';
+                    nextQuestion.style.display = 'block'; // Show the next question
+                } else {
+                    // On the last question, hide the "Next" button and show the submit button
+                    button.style.display = 'none'; // Hide the "Next" button of the last question
+                    submitButton.style.display = 'block'; // Show the submit button after the last question
+                }
+            });
+        });
+
+        // Initially, hide all questions except the first one and the submit button
+        document.querySelectorAll('.question-container').forEach((question, index) => {
+            if (index !== 0) {
+                question.style.display = 'none';
+            }
+        });
+        
+        // Hide the submit button initially
+        submitButton.style.display = 'none';
     });
 </script>
-
-            <!-- about
-            ----------------------------------------------- -->
-            
-
-            <!-- portfolio
-            ----------------------------------------------- -->
             {% endblock content %}

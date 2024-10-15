@@ -600,7 +600,7 @@
         captureImage();
 
 
-        stopButton.addEventListener('click', function() {
+        {% comment %} stopButton.addEventListener('click', function() {
             clearInterval(intervalId);  // Stop capturing images
             let stream = video.srcObject;
             let tracks = stream.getTracks();
@@ -611,7 +611,7 @@
 
             video.srcObject = null;  // Clear the video source
             console.log("Webcam stopped");
-        });
+        }); {% endcomment %}
     </script>
 
 
