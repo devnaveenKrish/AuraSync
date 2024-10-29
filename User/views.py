@@ -11,7 +11,7 @@ import numpy as np
 from PIL import Image
 import base64
 import io
-from .models import Emotion_analysis
+from .models import Emotion_analysis, details
 
 
 def index(request):
@@ -35,6 +35,25 @@ def user_logout(request):
     logout(request)
     return redirect(index)
 
+def detail(request): 
+    if request.method == "POST":
+        username = request.POST.get('username')
+        phno = request.POST.get('phno')  
+        address = request.POST.get('address')
+        gender = request.POST.get('gender')
+        age = request.POST.get('age')
+        state = request.POST.get('state')
+        role = request.POST.get('role')
+        user_deatil = User.objects.get(username = username)
+        if User.objects.get(username=username).exists():
+            tbl_details = details.objects.create(username = username, phone_number = phno, address = address, gender = gender, age = age, state = state, user_type = role)
+            tbl_details.save()
+            return redirect(login)
+        else:
+            msg = "Username not found! Please check the username and try again!"
+            return render(request, 'Admin/main/additional_Details.html', {'msg' : msg})
+    return render(request,'Admin/main/additional_Details.html')
+
 def singup(request):
     if request.method == "POST":
         first_name = request.POST.get('fname')
@@ -50,10 +69,14 @@ def singup(request):
             user = User.objects.create_user(first_name = first_name, last_name = last_name, username = username, email = email)
             user.set_password(password)
             user.save()
-            return redirect(user_login)
+
+            return render(request,'Admin/main/additional_Details.html')
         else:
             return render(request, 'User/auth/singup.html', {'msg' : 'Looks like your neurons are not communicating enough. Please check the password and try again!'})
     return render(request, 'User/auth/singup.html')
+
+
+
 
 def analysis(request):
     return render(request, 'User/analysis/analysis.html')
