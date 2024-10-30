@@ -30,7 +30,7 @@
   <link href="{% static 'Admin/css/nucleo-icons.css' %}" rel="stylesheet" />
   <link href="{% static 'Admin/css/nucleo-svg.css' %}" rel="stylesheet" />
   <!-- Font Awesome Icons -->
-  <script src="https://kit.fontawesome.com/42d5adcbca.js' %}" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
   <link href="{% static 'Admin/css/nucleo-svg.css' %}" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="{% static 'Admin/css/argon-dashboard.css' %}" rel="stylesheet" />
@@ -50,40 +50,7 @@
           <span class="navbar-toggler-bar bar3"></span>
         </span>
       </button>
-      {% comment %} <div class="collapse navbar-collapse" id="navigation">
-        <ul class="navbar-nav mx-auto">
-          <li class="nav-item">
-            <a class="nav-link d-flex align-items-center me-2 active" aria-current="page" href="../pages/dashboard.html">
-              <i class="fa fa-chart-pie opacity-6  me-1"></i>
-              Dashboard
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link me-2" href="../pages/profile.html">
-              <i class="fa fa-user opacity-6  me-1"></i>
-              Profile
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link me-2" href="../pages/sign-up.html">
-              <i class="fas fa-user-circle opacity-6  me-1"></i>
-              Sign Up
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link me-2" href="../pages/sign-in.html">
-              <i class="fas fa-key opacity-6  me-1"></i>
-              Sign In
-            </a>
-          </li>
-        </ul>
-        <ul class="navbar-nav d-lg-block d-none">
-          <li class="nav-item">
-            <a href="https://www.creative-tim.com/product/argon-dashboard" class="btn btn-sm mb-0 me-1 bg-gradient-light">Free Download</a>
-          </li>
-        </ul>
-      </div> {% endcomment %}
-    </div>
+     
   </nav>
   <!-- End Navbar -->
   <main class="main-content  mt-0">
@@ -166,15 +133,19 @@
                   <input type="text" class="form-control" placeholder="Address" aria-label="address" name='address'>
                 </div>
                 <div class="mb-3">
-                  <input type="text" class="form-control" placeholder="Gender" aria-label="gender" name=gender >
-                </div>
+                  <select class="form-control" name="gender" aria-label="gender">
+                      <option value="" disabled selected>Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                  </select>
+              </div>
                 <div class="mb-3">
                   <input type="text" class="form-control" placeholder="Age" aria-label="age" name='age'>
                 </div>
                 <div class="mb-3">
                   <input type="text" class="form-control" placeholder="State" aria-label="state" name='state'>
                 </div>
-                  <div class="mb-3">
+                <div class="mb-3">
                     <select class="form-control" name="role" aria-label="Role">
                         <option value="" disabled selected>Select Role</option>
                         <option value="user">User</option>
@@ -188,7 +159,7 @@
                   </label>
                 </div>
                 <div class="text-center">
-                  <button type="submit" class="btn bg-gradient-dark w-100 my-4 mb-2">Sign up</button>
+                  <button type="submit" class="btn bg-gradient-dark w-100 my-4 mb-2">Login</button>
                 </div>
                 <p class="text-sm mt-3 mb-0">Already have an account? <a href="{% url 'user_login' %}" class="text-dark font-weight-bolder">Sign in</a></p>
               </form>
