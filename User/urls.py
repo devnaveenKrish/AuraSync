@@ -8,4 +8,7 @@ urlpatterns = [
     path('user_logout', views.user_logout, name='user_logout'), 
     path('analysis', views.analysis, name='analysis'), 
     path('detect-facial-emotion/', views.detect_facial_emotion, name='detect_facial_emotion'),
+    path('detail',views.detail, name='detail'),
+    path('trainer_dashboard',views.trainer_dashboard,name = 'trainer_dashboard'),
+    path('Analysis_page',views.Analysis_page,name = 'Analysis_page'),
 ]

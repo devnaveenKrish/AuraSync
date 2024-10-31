@@ -18,3 +18,25 @@ class Emotion_analysis(models.Model):
 
     def __str__(self):
         return self.user.username
+    
+    
+class User_Details(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    phone_number = models.CharField(max_length = 10)
+    address = models.CharField(max_length=10)
+    gender = models.CharField(max_length=255)
+    age = models.CharField(max_length=255)
+    state = models.CharField(max_length=255)
+    user_type = models.CharField(max_length=255)
+    trainer = models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
+
+
+    
+
+
+
+
+

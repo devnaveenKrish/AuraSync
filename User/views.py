@@ -11,29 +11,64 @@ import numpy as np
 from PIL import Image
 import base64
 import io
-from .models import Emotion_analysis
+from .models import Emotion_analysis, User_Details
+from django.contrib.auth.decorators import login_required
 
 
 def index(request):
     return render(request, 'User/index.html')
+def trainer_dashboard(request):
+    return render(request,'Trainer/main/UserTable.html')
 
+# def user_login(request):
+#     if request.method == "POST":
+#         username = request.POST.get('username')
+#         password = request.POST.get('password')
+#         user = authenticate(request, username=username, password=password)
+#         if user is not None and user.is_active:
+#             login(request, user)
+#             return redirect(index)
+#         elif User_Details.user_type == 'user':
+#             login(request, user)
+#             return redirect(index)  
+#         else:
+#             print(username, password)
+#             return render(request, 'User/auth/login.html', {'msg':'Oops! Our emotion detection model senses a bit of frustration. It seems the password got scrambled in your neurons. Give it another go!😉'})
+#     return render(request, 'User/auth/login.html')
 def user_login(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
+        
         if user is not None and user.is_active:
-            login(request, user)
-            return redirect(index)
+            user_details = User_Details.objects.filter(user=user).first()
+            
+            if user_details:
+                if user_details.user_type == 'user':
+                    login(request, user)
+                    return redirect(index)  
+                elif user_details.user_type == 'trainer':
+                    login(request, user)
+                    return redirect(trainer_dashboard)  
+            else:
+                return render(request, 'User/auth/login.html', {
+                    'msg': 'User details are incomplete. Please contact support.'
+                })
         else:
-            print("No")
-            print(username, password)
-            return render(request, 'User/auth/login.html', {'msg':'Oops! Our emotion detection model senses a bit of frustration. It seems the password got scrambled in your neurons. Give it another go!😉'})
+            # Failed authentication
+           print(username, password)
+           return render(request, 'User/auth/login.html', {'msg':'Oops! Our emotion detection model senses a bit of frustration. It seems the password got scrambled in your neurons. Give it another go!😉'})
+    
     return render(request, 'User/auth/login.html')
 
 def user_logout(request):
     logout(request)
     return redirect(index)
+
+def detail(request): 
+    print("Yes")
+    return render(request,'User/auth/additional_Details.html')
 
 def singup(request):
     if request.method == "POST":
@@ -50,10 +85,33 @@ def singup(request):
             user = User.objects.create_user(first_name = first_name, last_name = last_name, username = username, email = email)
             user.set_password(password)
             user.save()
-            return redirect(user_login)
+            return redirect('detail')
         else:
             return render(request, 'User/auth/singup.html', {'msg' : 'Looks like your neurons are not communicating enough. Please check the password and try again!'})
     return render(request, 'User/auth/singup.html')
+
+def detail(request): 
+    if request.method == "POST":
+        user = request.POST.get('username')
+        phno = request.POST.get("phno")
+        address = request.POST.get("address")
+        gender = request.POST.get("gender")
+        age = request.POST.get("age")
+        state = request.POST.get("state")
+        role = request.POST.get("role")
+        if User.objects.filter(username = user).exists():
+            user_inst = User.objects.get(username = user)
+            tbl_details = User_Details.objects.create(user = user_inst, phone_number = phno, address = address, gender = gender, age = age, state = state, user_type = role)
+            tbl_details.save()
+            return redirect('user_login')
+        else:
+            msg = "Haha! Found your deffective neuron! Check the Username and try again!"
+            return render(request, 'User/auth/additional_Details.html', {'msg' : msg})
+        
+    return render(request,'User/auth/additional_Details.html')
+
+
+
 
 def analysis(request):
     return render(request, 'User/analysis/analysis.html')
