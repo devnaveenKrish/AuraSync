@@ -1,7 +1,13 @@
+{% load static %}
 <html>
     <head>
         <title> User Report</title>
         <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'User/css/vendor.css' %}">
+        <link rel="stylesheet" href="{% static 'User/css/styles.css' %}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
     </head>
     <style>
@@ -10,6 +16,12 @@
             font-family: 'Orbitron', sans-serif;  /* Body fonts */
             color: white;                       /* Text color */
         }   
+
+        .kanit-regular {
+        font-family: "Kanit", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        }
 
         ul {
          list-style-type: none; /* Removes bullet points */
@@ -31,8 +43,117 @@
          background-color: transparent; /* Transparent background */
          box-sizing: border-box; /* Include padding and border in width */
       }
-        
+
+      .highcharts-figure,
+.highcharts-data-table table {
+    min-width: 310px;
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+#container {
+    height: 400px;
+}
+
+.highcharts-data-table table {
+    font-family: Verdana, sans-serif;
+    border-collapse: collapse;
+    border: 1px solid #ebebeb;
+    margin: 10px auto;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+.highcharts-data-table caption {
+    padding: 1em 0;
+    font-size: 1.2em;
+    color: #555;
+}
+
+.highcharts-data-table th {
+    font-weight: 600;
+    padding: 0.5em;
+}
+
+.highcharts-data-table td,
+.highcharts-data-table th,
+.highcharts-data-table caption {
+    padding: 0.5em;
+}
+
+.highcharts-data-table thead tr,
+.highcharts-data-table tr:nth-child(even) {
+    background: #f8f8f8;
+}
+
+.highcharts-data-table tr:hover {
+    background: #f1f7ff;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}
+
+.highcharts-figure,
+  .highcharts-data-table table {
+      min-width: 320px;
+      max-width: 800px;
+      margin: 1em auto;
+  }
+
+  .highcharts-data-table table {
+      font-family: Verdana, sans-serif;
+      border-collapse: collapse;
+      border: 1px solid #ebebeb;
+      margin: 10px auto;
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+  }
+
+  .highcharts-data-table caption {
+      padding: 1em 0;
+      font-size: 1.2em;
+      color: #555;
+  }
+
+  .highcharts-data-table th {
+      font-weight: 600;
+      padding: 0.5em;
+  }
+
+  .highcharts-data-table td,
+  .highcharts-data-table th,
+  .highcharts-data-table caption {
+      padding: 0.5em;
+  }
+
+  .highcharts-data-table thead tr,
+  .highcharts-data-table tr:nth-child(even) {
+      background: #f8f8f8;
+  }
+
+  .highcharts-data-table tr:hover {
+      background: #f1f7ff;
+  }
+
+  input[type="number"] {
+      min-width: 50px;
+  }
+
+  .highcharts-description {
+      margin: 0.3rem 10px;
+  }
+
     </style>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
     <body>
         <header>
@@ -43,31 +164,225 @@
             </div>
             <center>
                 <h1 class="s-intro__pretitle"><span style="color:hsla(37, 95%, 47%, 1);">AuraSync</span></h1>
-                <h2 class="s-intro__pretitle"><u>User emotion report</u></h2>
+                <h1 class="s-intro__pretitle kanit-regular">User emotion report</h1>
             </center>
         </header>
 
         <div class="container">
             <div class="column"><ul>
-                <li><b>First Name : </b>Naveen</li>
-                <li><b>Last Name : </b>Krishna</li>
-                <li><b>User Id : </b>12</li>
+                <li><b>First Name : </b>{{ user.first_name }}</li>
+                <li><b>Last Name : </b>{{ user.last_name }}</li>
+                <li><b>User Id : </b>{{ user.id }}</li>
             </ul></div>
             <div class="column"><ul>
-                <li><b>Email : </b>naveenkrish19052002@gmail.com</li>
-                <li><b>Date Of Birth : </b>19/05/2002</li>
-                <li><b>Age : </b>22</li>
+                <li><b>Email : </b>{{ user.email }}</li>
+                <li><b>Date Of Birth : </b>{{ user_details.dob }}</li>
+                <li><b>Age : </b>{{ user_details.age }}</li>
             </ul></div>
             <div class="column"><ul>
-                <li><b>Nationality : </b>Indian</li>
-                <li><b>Option 2 : </b>Option answer</li>
-                <li><b>Option 3 : </b>option Answer</li>
+                <li><b>Phone Number : </b>{{ user_details.phone_number }}</li>
+                <li><b>Gender : </b>{{ user_details.gender }}</li>
+                <li><b>State : </b>{{ user_details.state }}</li>
             </ul></div>
          </div>
 
         <container>
-            <center><h1>the charts will come here!</h1></center>
-            
-        </container>
+            <!-- {% for emotion in emotions %}
+            {{ emotion.emotion_label }}
+            {% endfor %} -->
+
+                        <center><h3 style="color:white;">Today's emotions count</h3></center>
+                        <figure class="highcharts-figure">
+                            <div id="container"></div>
+                            <p class="highcharts-description">
+                                Chart showing browser market shares. Clicking on individual columns
+                                brings up more detailed data. This chart makes use of the drilldown
+                                feature in Highcharts to easily switch between datasets.
+                            </p>
+                        </figure>
+                        <center><h3 style="color:white;">Today's emotions propotion</h3></center>
+                        <figure class="highcharts-figure">
+                            <div id="container2"></div>
+                            <p class="highcharts-description">
+                                Pie charts are very popular for showing a compact overview of a
+                                composition or comparison. While they can be harder to read than
+                                column charts, they remain a popular choice for small datasets.
+                            </p>
+                        </figure>
+
+                    
+        </container> 
+
+<script>
+    Highcharts.chart("container2", {
+  chart: {
+    type: "pie",
+  },
+  title: {
+    text: "Egg Yolk Composition",
+  },
+  tooltip: {
+    valueSuffix: "%",
+  },
+  subtitle: {
+    text: 'Source:<a href="https://www.mdpi.com/2072-6643/11/3/684/htm" target="_default">MDPI</a>',
+  },
+  plotOptions: {
+    series: {
+      allowPointSelect: true,
+      cursor: "pointer",
+      dataLabels: [
+        {
+          enabled: true,
+          distance: 20,
+        },
+        {
+          enabled: true,
+          distance: -40,
+          format: "{point.percentage:.1f}%",
+          style: {
+            fontSize: "1.2em",
+            textOutline: "none",
+            opacity: 0.7,
+          },
+          filter: {
+            operator: ">",
+            property: "percentage",
+            value: 10,
+          },
+        },
+      ],
+    },
+  },
+  series: [
+    {
+      name: "Percentage",
+      colorByPoint: true,
+      data: [
+        {% for emotion in Highcharts_data %}
+            {
+                name: '{{ emotion.emotion_label }}',
+                y: {{ emotion.count }}/{{ total_emotion_count }},
+                }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+        // {
+        //   name: "Fat",
+        //   sliced: true,
+        //   selected: true,
+        //   y: 26.71,
+        // },
+        // {
+        //   name: "Carbohydrates",
+        //   y: 1.09,
+        // },
+        // {
+        //   name: "Protein",
+        //   y: 15.5,
+        // },
+        // {
+        //   name: "Ash",
+        //   y: 1.68,
+        // },
+      ],
+    },
+  ],
+})
+</script>
+
+<script>
+
+        Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                align: 'left',
+                text: 'Total Emotion Analysis'
+            },
+
+            accessibility: {
+                announceNewData: {
+                    enabled: true
+                }
+            },
+            xAxis: {
+                type: 'category'
+            },
+            yAxis: {
+                title: {
+                    text: 'Total Count of daily emotion.'
+                }
+        
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.y:.1f}'
+                    }
+                }
+            },
+        
+            tooltip: {
+                headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                pointFormat: '<span style="color:{point.color}">{point.name}</span>: ' +
+                    '<b>{point.y:.2f}%</b> of total<br/>'
+            },
+        
+            series: [
+                {
+                    
+                    name: 'Emotions',
+                    colorByPoint: true,
+                    data: [
+                    {% for emotion in Highcharts_data %}
+                        {
+                            name: '{{ emotion.emotion_label }}',
+                            y: {{ emotion.count }},
+                            drilldown: '{{ emotion.emotion_label }}'
+                        }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                        // {
+                        //     name: 'Safari',
+                        //     y: 19.84,
+                        //     drilldown: 'Safari'
+                        // },
+                        // {
+                        //     name: 'Firefox',
+                        //     y: 4.18,
+                        //     drilldown: 'Firefox'
+                        // },
+                        // {
+                        //     name: 'Edge',
+                        //     y: 4.12,
+                        //     drilldown: 'Edge'
+                        // },
+                        // {
+                        //     name: 'Opera',
+                        //     y: 2.33,
+                        //     drilldown: 'Opera'
+                        // },
+                        // {
+                        //     name: 'Internet Explorer',
+                        //     y: 0.45,
+                        //     drilldown: 'Internet Explorer'
+                        // },
+                        // {
+                        //     name: 'Other',
+                        //     y: 1.582,
+                        //     drilldown: null
+                        // }
+                    ]
+                }
+            ]
+        });
+        </script>
+
+
     </body>
+    </html>
     

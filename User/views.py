@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, HttpResponse
+from django.db.models import Count
 from django.http import StreamingHttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 import os
+from django.utils import timezone
 from deepface import DeepFace
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -115,6 +117,23 @@ def detail(request):
 
 def analysis(request):
     return render(request, 'User/analysis/analysis.html')
+
+def Analysis_page(request, user_id):
+    current_date = timezone.now().date()
+    user = User.objects.filter(id = user_id).first()
+    user_details = User_Details.objects.filter(user = user).first()
+    emotion_counts = (
+        Emotion_analysis.objects
+        .filter(user=user, created_at__date = current_date)
+        .values('emotion_label')
+        .annotate(count=Count('emotion_label'))
+        .order_by('-count')
+    )
+    total_emotion_count = Emotion_analysis.objects.filter(user=user, created_at__date = current_date).values('emotion_label').count()
+    print(total_emotion_count)
+    Highcharts_data = list(emotion_counts)
+    print(Highcharts_data)
+    return render(request, 'User/analysis/user_report.html', {'user' : user, 'user_details' : user_details, 'Highcharts_data': Highcharts_data, 'total_emotion_count': total_emotion_count})
 
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------

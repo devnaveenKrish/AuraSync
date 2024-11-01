@@ -10,5 +10,5 @@ urlpatterns = [
     path('detect-facial-emotion/', views.detect_facial_emotion, name='detect_facial_emotion'),
     path('detail',views.detail, name='detail'),
     path('trainer_dashboard',views.trainer_dashboard,name = 'trainer_dashboard'),
-    path('Analysis_page',views.Analysis_page,name = 'Analysis_page'),
+    path('Analysis_page/<int:user_id>',views.Analysis_page,name = 'Analysis_page'),
 ]

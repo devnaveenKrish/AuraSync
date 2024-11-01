@@ -105,6 +105,8 @@
     <div class="loading-spinner-circle"></div>
   </div>
 </div>
+<button id="stopButton" class=" btn s-intro__more-btn" style="color:black;" onclick="stopCamera()">Stop Analysing</button> </a>
+<p id="emotion-output"></p>
 </center>
 
                     </div> <!-- s-intro__content-inner -->
@@ -544,7 +546,7 @@
             <!-- contact
             ----------------------------------------------- -->
 
-<script>
+<!-- <script>
 
  let video = document.getElementById('webcam');
         let stopButton = document.getElementById('stopButton');
@@ -601,6 +603,68 @@
 
 
         
+    </script> -->
+
+
+
+    <script>
+        let intervalId;
+        let stream;
+        
+        function sendImageToServer(imageData) {
+            const formData = new FormData();
+            formData.append('image', imageData);
+    
+            fetch('detect-facial-emotion/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.emotion) {
+                    document.getElementById('emotion-output').innerText = data.emotion;
+                } else {
+                    console.error('Emotion not detected');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    
+        function captureImage() {
+            const video = document.createElement('video'); // Create video element (hidden)
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+    
+            navigator.mediaDevices.getUserMedia({ video: true }).then(mediaStream => {
+                stream = mediaStream;
+                video.srcObject = stream;
+                video.play();
+    
+                // Wait for the video to start playing
+                video.onloadedmetadata = () => {
+                    intervalId = setInterval(() => {
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+                        const imageData = canvas.toDataURL('image/png').split(',')[1];
+                        sendImageToServer(imageData);
+                    }, 5000); // Capture every 5 seconds
+                };
+            }).catch(error => console.error("Error accessing webcam:", error));
+        }
+    
+        function stopCamera() {
+            if (intervalId) {
+                clearInterval(intervalId); // Stop image capture interval
+                window.location.href = "{% url 'Analysis_page' user_id=user.id %}";
+            }
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop()); // Stop all video streams
+            }
+        }
+    
+        captureImage();
     </script>
 
 

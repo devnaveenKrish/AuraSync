@@ -23,8 +23,9 @@ class Emotion_analysis(models.Model):
 class User_Details(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     phone_number = models.CharField(max_length = 10)
-    address = models.CharField(max_length=10)
+    address = models.CharField(max_length=225)
     gender = models.CharField(max_length=255)
+    dob = models.DateField(null=True)
     age = models.CharField(max_length=255)
     state = models.CharField(max_length=255)
     user_type = models.CharField(max_length=255)
