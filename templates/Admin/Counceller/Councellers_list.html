@@ -1,13 +1,13 @@
 {% extends 'Admin/bases/admin_base.html' %}
 {% load static %}
 {% block content %}
-<center><h1 style="color:white; padding:65px;">USER LIST</h1></center>
+<center><h1 style="color:white; padding:65px;">Counceller List</h1></center>
     <div class="container-fluid py-4">
       <div class="row">
         <div class="col-12">
           <div class="card mb-4">
             <div class="card-header pb-0">
-              <center><h6>Users</h6> </center>
+              <center><h6>Counceller</h6> </center>
               
             </div>
             
@@ -18,9 +18,9 @@
                 <table class="table align-items-center mb-0">
                 
                   <thead>
-                  <a href="{% url 'singup' %}" target="_blank" class="btn btn-dark btn-sm mb-3">Create User</a>
+                  <a href="{% url 'singup' %}" target="_blank" class="btn btn-dark btn-sm mb-3">Create Counceller</a>
                     <tr>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">User id</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Couceller id</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">First Name</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Last Name</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Username</th>
@@ -30,19 +30,20 @@
                     </tr>
                   </thead>
                   <tbody>
-                  {% for user in users %}
+                  {% for councerler in councellers %}
                     <tr>
                       <td>
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">{{user.id}}</h6>
+                            <h6 class="mb-0 text-sm">{{councerler.id}}</h6>
                           </div>
                         </div>
                       </td>
                       <td>
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">{{user.first_name}}</h6>
+                            <h2>
+                            <h6 class="mb-0 text-sm">{{councerlers.user.first_name}}</h6>
                           </div>
                         </div>
                       </td>
@@ -51,13 +52,13 @@
                         <span class="badge badge-sm bg-gradient-success">Online</span>
                       </td> {% endcomment %}
                       <td>
-                        <p class="text-xs font-weight-bold mb-0">{{user.last_name}}</p>
+                        <p class="text-xs font-weight-bold mb-0">{{councerler.user.last_name}}</p>
                       </td>
                       <td>
-                        <p class="text-xs font-weight-bold mb-0">{{user.username}}</p>
+                        <p class="text-xs font-weight-bold mb-0">{{councerler.user.username}}</p>
                       </td>
                       <td>
-                        <p class="text-xs font-weight-bold mb-0">{{user.email}}</p>
+                        <p class="text-xs font-weight-bold mb-0">{{councerler.user.email}}</p>
                       </td>
 
                       <td>

@@ -3,6 +3,7 @@
     <head>
         <title> User Report</title>
         <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
         <link rel="stylesheet" href="{% static 'User/css/vendor.css' %}">
         <link rel="stylesheet" href="{% static 'User/css/styles.css' %}">
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -146,9 +147,135 @@
       margin: 0.3rem 10px;
   }
 
+  * {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+#container {
+    height: 400px;
+}
+
+.highcharts-figure,
+.highcharts-data-table table {
+    min-width: 310px;
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+#sliders {
+    margin: 0.3rem 10px;
+}
+
+#sliders td input[type="range"] {
+    display: inline;
+}
+
+#sliders td {
+    padding-right: 1em;
+    white-space: nowrap;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}
+
+
+
+.highcharts-figure,
+.highcharts-data-table table {
+    min-width: 320px;
+    max-width: 660px;
+    margin: 1em auto;
+}
+
+.highcharts-data-table table {
+    font-family: Verdana, sans-serif;
+    border-collapse: collapse;
+    border: 1px solid #ebebeb;
+    margin: 10px auto;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+.highcharts-data-table caption {
+    padding: 1em 0;
+    font-size: 1.2em;
+    color: #555;
+}
+
+.highcharts-data-table th {
+    font-weight: 600;
+    padding: 0.5em;
+}
+
+.highcharts-data-table td,
+.highcharts-data-table th,
+.highcharts-data-table caption {
+    padding: 0.5em;
+}
+
+.highcharts-data-table thead tr,
+.highcharts-data-table tr:nth-child(even) {
+    background: #f8f8f8;
+}
+
+.highcharts-data-table tr:hover {
+    background: #f1f7ff;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}
+
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+#container {
+    height: 400px;
+}
+
+.highcharts-figure,
+.highcharts-data-table table {
+    min-width: 310px;
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+#sliders {
+    margin: 0.3rem 10px;
+}
+
+#sliders td input[type="range"] {
+    display: inline;
+}
+
+#sliders td {
+    padding-right: 1em;
+    white-space: nowrap;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}
+
+    </style>
+
+        <style>
+        /* Customize the content inside the print page */
+        @media print {
+            body {
+                font-family: Arial, sans-serif;
+                color: black;
+                background: white;
+            }
+        }
     </style>
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/cylinder.js"></script>
+<script src="https://code.highcharts.com/highcharts-3d.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
@@ -159,7 +286,7 @@
         <header>
             <div class="s-header__logo">
                 <a class="logo" href="index.html">
-                    <img src="D:\Trimester_4\MiniProject\AuraSync Git\AuraSync\static\User\images\logo.svg" height="60px" width="60px" alt="Homepage">
+                    <img src="/static/User/images/logo.svg" height="60px" width="60px" alt="Homepage">
                 </a>
             </div>
             <center>
@@ -186,32 +313,45 @@
             </ul></div>
          </div>
 
-        <container>
-            <!-- {% for emotion in emotions %}
-            {{ emotion.emotion_label }}
-            {% endfor %} -->
-
-                        <center><h3 style="color:white;">Today's emotions count</h3></center>
-                        <figure class="highcharts-figure">
-                            <div id="container"></div>
+                <container>
+                    <center><h3 style="color:white;">Today's emotions count</h3></center>
+                    <figure class="highcharts-figure">
+                        <div id="container"></div>
                             <p class="highcharts-description">
-                                Chart showing browser market shares. Clicking on individual columns
-                                brings up more detailed data. This chart makes use of the drilldown
-                                feature in Highcharts to easily switch between datasets.
+                                This graph shows the amount of the user's emotion. The different bars in the graphs represents different emotions as mentioned below each of them.
                             </p>
                         </figure>
-                        <center><h3 style="color:white;">Today's emotions propotion</h3></center>
-                        <figure class="highcharts-figure">
-                            <div id="container2"></div>
-                            <p class="highcharts-description">
-                                Pie charts are very popular for showing a compact overview of a
-                                composition or comparison. While they can be harder to read than
-                                column charts, they remain a popular choice for small datasets.
-                            </p>
-                        </figure>
+                </container>
 
-                    
-        </container> 
+                <container>
+                    <center><h3 style="color:white;">Today's emotions propotion</h3></center>
+                    <figure class="highcharts-figure">
+                        <div id="container2"></div>
+                            <p class="highcharts-description">
+                                    This pie chart shows the proposion of the user emotion in percentages.
+                            </p>
+                    </figure>
+                </container>
+
+
+
+            <center><h3 style="color:white;"> Overall Emotion Analysis </h3></center>
+                <figure class="highcharts-figure">
+                    <div id="container3"></div>
+                        <p class="highcharts-description">
+                            This 3D column chart shows the  overall emotion behaviour of the user. Each label under x-axis shows the emotion label.
+                        </p>
+                <figure>
+<br>
+<br>
+                <center><button class="next-btn" id="printDownloadBtn">Print & Download PDF</button></center>
+
+
+        
+
+
+        
+        
 
 <script>
     Highcharts.chart("container2", {
@@ -219,13 +359,13 @@
     type: "pie",
   },
   title: {
-    text: "Egg Yolk Composition",
+    text: "Emotion propotion",
   },
   tooltip: {
     valueSuffix: "%",
   },
   subtitle: {
-    text: 'Source:<a href="https://www.mdpi.com/2072-6643/11/3/684/htm" target="_default">MDPI</a>',
+    text: "Today's Report",
   },
   plotOptions: {
     series: {
@@ -382,7 +522,112 @@
         });
         </script>
 
+        <script>
+        
+// Set up the chart
+const chart = new Highcharts.Chart({
+    chart: {
+        renderTo: 'container3',
+        type: 'column',
+        options3d: {
+            enabled: true,
+            alpha: 15,
+            beta: 15,
+            depth: 50,
+            viewDistance: 25
+        }
+    },
+    xAxis: {
+        type: 'category'
+    },
+    yAxis: {
+        title: {
+            enabled: false
+        }
+    },
+    tooltip: {
+        headerFormat: '<b>{point.key}</b><br>',
+        pointFormat: 'Cars sold: {point.y}'
+    },
+    title: {
+        text: 'Overall emotion analysis',
+        align: 'left'
+    },
+    subtitle: {
+        text: 'Overall analysis',
+        align: 'left'
+    },
+    legend: {
+        enabled: false
+    },
+    plotOptions: {
+        column: {
+            depth: 25
+        }
+    },
+    series: [{
+        data: [
+            {% for emotion in all_emotions %}
+                        {
+                            name: '{{ emotion.emotion_label }}',
+                            y: {{ emotion.count }},
+                            drilldown: '{{ emotion.emotion_label }}'
+                        }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+        ],
+        colorByPoint: true
+    }]
+});
+
+function showValues() {
+    document.getElementById(
+        'alpha-value'
+    ).innerHTML = chart.options.chart.options3d.alpha;
+    document.getElementById(
+        'beta-value'
+    ).innerHTML = chart.options.chart.options3d.beta;
+    document.getElementById(
+        'depth-value'
+    ).innerHTML = chart.options.chart.options3d.depth;
+}
+
+// Activate the sliders
+document.querySelectorAll(
+    '#sliders input'
+).forEach(input => input.addEventListener('input', e => {
+    chart.options.chart.options3d[e.target.id] = parseFloat(e.target.value);
+    showValues();
+    chart.redraw(false);
+}));
+
+showValues();
+
+</script>
+
+    <script>
+        document.getElementById("printDownloadBtn").addEventListener("click", function() {
+            // Print the page
+            window.print(); // Open print dialog
+
+            // Create PDF after a slight delay to allow print dialog to open
+            setTimeout(function() {
+                const { jsPDF } = window.jspdf;  // Get jsPDF class
+                const doc = new jsPDF();
+
+                // Capture the HTML content and add it to the PDF
+                doc.html(document.body, {
+                    callback: function (doc) {
+                        doc.save("analysis_report.pdf");  // Save the file as PDF
+                    },
+                    margin: [10, 10, 10, 10],  // Optional margin
+                    x: 10,
+                    y: 10
+                });
+            }, 1000); // 1-second delay to prevent print dialog interruption
+        });
+    </script>
+        
+
 
     </body>
     </html>
-    

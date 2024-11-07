@@ -11,6 +11,7 @@ urlpatterns = [
     path('edit_question/<int:qn_id>', views.edit_question, name = 'edit_question'),
     path('users_list',views.users_list,name = 'users_list'),
     path('edit_user/<int:user_id>', views.edit_user, name = 'edit_user'),
-    path('delete_user/<int:user_id>', views.delete_user, name = 'delete_user')
-
+    path('delete_user/<int:user_id>', views.delete_user, name = 'delete_user'),
+    path('councellers', views.councellers, name = 'councellers'),
+    path('trainers', views.trainers, name = 'trainers'),
 ]
