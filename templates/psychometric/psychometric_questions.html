@@ -41,7 +41,7 @@
                         true <span style="color:hsla(37, 95%, 47%, 1);">Emotion</span>.
                         </h1>	 {% endcomment %}
 
-
+                        {% if questions %}
                             <form id="psychometric-form" method="POST" action="">
                                 {% csrf_token %}
     
@@ -73,6 +73,10 @@
 
                                 <button id="submit-btn" type="submit" style="display:none;" onclick="alert('Your response have submitted successfully.')">Submit</button>
                             </form>
+                        {% else %}
+                        <center><h1 style="color: white;">No Questions to display! </h1></center>
+                        <button type="button" class="next-btn"><a href="../">Go back!</a></button>
+                        {% endif %}
 	
                     </div> <!-- s-intro__content-inner -->
 

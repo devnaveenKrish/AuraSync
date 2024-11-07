@@ -129,11 +129,12 @@ def Analysis_page(request, user_id):
         .annotate(count=Count('emotion_label'))
         .order_by('-count')
     )
+    print("Emotion_count : ",emotion_counts)
+    all_emotions = Emotion_analysis.objects.filter(user = user).values('emotion_label').annotate(count=Count('emotion_label')).order_by('-count')
+    print("All emotions : ",all_emotions)
     total_emotion_count = Emotion_analysis.objects.filter(user=user, created_at__date = current_date).values('emotion_label').count()
-    print(total_emotion_count)
     Highcharts_data = list(emotion_counts)
-    print(Highcharts_data)
-    return render(request, 'User/analysis/user_report.html', {'user' : user, 'user_details' : user_details, 'Highcharts_data': Highcharts_data, 'total_emotion_count': total_emotion_count})
+    return render(request, 'User/analysis/user_report.html', {'user' : user, 'user_details' : user_details, 'Highcharts_data': Highcharts_data, 'total_emotion_count': total_emotion_count, 'all_emotions' : all_emotions})
 
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
