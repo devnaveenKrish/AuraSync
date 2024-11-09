@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from Psychometric.models import psychometric_question
+from User.models import User_Details
 
 
 @login_required(login_url='admin_login')
@@ -111,8 +112,17 @@ def edit_user (request,user_id):
         user.save()
         return redirect(users_list)
     return render(request, 'Admin/Users/edit_user.html', {'usr' : user})
-        
 
+def councellers(request):
+    councellers = User_Details.objects.filter(user_type="counceller")
+    print(councellers)
+    return render(request, 'Admin/Counceller/Councellers_list.html', {'councellers' : councellers})
 
+def trainers(request):
+    users = User_Details.objects.filter(user_type='trainer')
+    return render(request, 'Admin/trainer/trainer_list.html', {'users': users})
 
-    
+def delete_user(request, user_id):
+    user = User_Details.objects.get(id = user_id)
+    user.user.delete() 
+    return redirect('trainers')   

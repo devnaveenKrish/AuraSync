@@ -18,9 +18,16 @@ from django.contrib.auth.decorators import login_required
 
 
 def index(request):
-    return render(request, 'User/index.html')
+    user_details = None  # Define a default value for user_details
+    if request.user.is_authenticated:
+        user = request.user
+        user_details = User_Details.objects.filter(user=user).first()
+    return render(request, 'User/index.html', {'user_details': user_details})
 def trainer_dashboard(request):
-    return render(request,'Trainer/main/UserTable.html')
+    trainer = request.user.id
+    users = User_Details.objects.filter(trainer=trainer)
+    print(users)
+    return render(request,'Trainer/main/UserTable.html', {'users': users})
 
 # def user_login(request):
 #     if request.method == "POST":
@@ -132,8 +139,34 @@ def Analysis_page(request, user_id):
     print("Emotion_count : ",emotion_counts)
     all_emotions = Emotion_analysis.objects.filter(user = user).values('emotion_label').annotate(count=Count('emotion_label')).order_by('-count')
     print("All emotions : ",all_emotions)
+    print("Emotion_count : ",emotion_counts)
+    all_emotions = Emotion_analysis.objects.filter(user = user).values('emotion_label').annotate(count=Count('emotion_label')).order_by('-count')
+    print("All emotions : ",all_emotions)
     total_emotion_count = Emotion_analysis.objects.filter(user=user, created_at__date = current_date).values('emotion_label').count()
     Highcharts_data = list(emotion_counts)
+    return render(request, 'User/analysis/user_report.html', {'user' : user, 'user_details' : user_details, 'Highcharts_data': Highcharts_data, 'total_emotion_count': total_emotion_count, 'all_emotions' : all_emotions})
+
+def trainer(request):
+    trainers = User_Details.objects.filter(user_type="trainer")
+    return render(request, 'User/trainer/trainer_list.html', {'trainers' : trainers})
+
+def trainer_assign(request, trainer_id):
+    user_id = request.user.id
+    trainer = User_Details.objects.filter(id = trainer_id).first()
+    user = User_Details.objects.filter(user = user_id).first()
+    user.trainer = trainer.user.id
+    user.save()
+    return redirect('index')
+
+def trainer_disallocate(request, user_id):
+    users = User_Details.objects.filter(id = user_id).first()
+    print(f'User id : {user_id} | user name : {users}')
+    users.trainer = None
+    users.save()
+    return redirect('trainer_dashboard')
+
+
+
     return render(request, 'User/analysis/user_report.html', {'user' : user, 'user_details' : user_details, 'Highcharts_data': Highcharts_data, 'total_emotion_count': total_emotion_count, 'all_emotions' : all_emotions})
 
 

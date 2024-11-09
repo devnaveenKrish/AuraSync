@@ -11,4 +11,8 @@ urlpatterns = [
     path('detail',views.detail, name='detail'),
     path('trainer_dashboard',views.trainer_dashboard,name = 'trainer_dashboard'),
     path('Analysis_page/<int:user_id>',views.Analysis_page,name = 'Analysis_page'),
+    path('trainer',views.trainer,name = 'trainer'),
+    path('trainer_assign/<int:trainer_id>',views.trainer_assign,name = 'trainer_assign'),
+    path('trainer_disallocate/<int:user_id>', views.trainer_disallocate, name="trainer_disallocate"), 
+    
 ]
