@@ -33,6 +33,12 @@ class User_Details(models.Model):
 
     def __str__(self):
         return self.user.username
+    
+class Feedback(models.Model):
+    email = models.CharField(max_length=255)
+    feedback_text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
 
     

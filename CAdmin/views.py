@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from Psychometric.models import psychometric_question
-from User.models import User_Details
+from User.models import User_Details, Feedback
 
 
 @login_required(login_url='admin_login')
@@ -18,7 +18,7 @@ def admin_login(request):
         if user is not None and user.is_active:
             if user.is_staff:
                 login(request, user)
-                return redirect(admin_index)
+                return redirect('users_list')
             else:
                 return render(request, 'Admin/main/sign-in.html', {'msg' : 'Access denied! You are not authorised to enter this dashboard!'})
         else:
@@ -125,4 +125,8 @@ def trainers(request):
 def delete_user(request, user_id):
     user = User_Details.objects.get(id = user_id)
     user.user.delete() 
-    return redirect('trainers')   
+    return redirect('trainers')  
+
+def feedback_form(request):
+    feedbacks = Feedback.objects.all()
+    return render(request, 'Admin/main/feedback.html', {'feedbacks': feedbacks}) 

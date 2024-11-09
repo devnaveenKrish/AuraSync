@@ -14,5 +14,5 @@ urlpatterns = [
     path('trainer',views.trainer,name = 'trainer'),
     path('trainer_assign/<int:trainer_id>',views.trainer_assign,name = 'trainer_assign'),
     path('trainer_disallocate/<int:user_id>', views.trainer_disallocate, name="trainer_disallocate"), 
-    
+    path('councellor',views.councellor,name = 'councellor'),
 ]

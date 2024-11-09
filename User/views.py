@@ -13,7 +13,7 @@ import numpy as np
 from PIL import Image
 import base64
 import io
-from .models import Emotion_analysis, User_Details
+from .models import Emotion_analysis, User_Details, Feedback
 from django.contrib.auth.decorators import login_required
 
 
@@ -22,6 +22,15 @@ def index(request):
     if request.user.is_authenticated:
         user = request.user
         user_details = User_Details.objects.filter(user=user).first()
+
+    if request.method == "POST":
+
+        email = request.POST.get('EMAIL')
+        message = request.POST.get('message')
+        msg = Feedback.objects.create(email = email, feedback_text=message)
+        msg.save()
+        return render(request, 'User/index.html', {'user_details': user_details})
+
     return render(request, 'User/index.html', {'user_details': user_details})
 def trainer_dashboard(request):
     trainer = request.user.id
@@ -161,6 +170,11 @@ def trainer_disallocate(request, user_id):
     users.trainer = None
     users.save()
     return redirect('trainer_dashboard')
+
+
+def councellor(request):
+    councellors = User_Details.objects.filter(user_type='counceller')
+    return render(request, 'User/councellor/councellor.html', {'councellors': councellors})
 
 
 
