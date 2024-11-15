@@ -157,22 +157,22 @@
               <form role="form" method=POST>
               {% csrf_token %}
                 <div class="mb-3">
-                  <input type="text" class="form-control" placeholder="First Name" aria-label="Name" name='fname'>
+                  <input type="text" class="form-control" placeholder="First Name" aria-label="Name" name='fname'required>
                 </div>
                 <div class="mb-3">
-                  <input type="text" class="form-control" placeholder="Last Name" aria-label="Name" name='lname'>
+                  <input type="text" class="form-control" placeholder="Last Name" aria-label="Name" name='lname'required>
                 </div>
                 <div class="mb-3">
-                  <input type="text" class="form-control" placeholder="Username" aria-label="Name" name='username'>
+                  <input type="text" class="form-control" placeholder="Username" aria-label="Name" name='username' required>
                 </div>
                 <div class="mb-3">
-                  <input type="email" class="form-control" placeholder="Email" aria-label="Email" name=email name='email'>
+                  <input type="email" class="form-control" placeholder="Email" aria-label="Email" name=email name='email' required>
                 </div>
                 <div class="mb-3">
-                  <input type="password" class="form-control" placeholder="Password" aria-label="Password" name='password'>
+                  <input type="password" class="form-control" placeholder="Password" aria-label="Password" name='password' required>
                 </div>
                 <div class="mb-3">
-                  <input type="password" class="form-control" placeholder="Confirm Password" aria-label="Password" name='cpassword'>
+                  <input type="password" class="form-control" placeholder="Confirm Password" aria-label="Password" name='cpassword' required>
                 </div>
                 <div class="form-check form-check-info text-start">
                   <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked>
