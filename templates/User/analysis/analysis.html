@@ -96,6 +96,7 @@
 <center> 
 <br>
 <h3 class="s-intro__pretitle"><span style="color:hsla(37, 95%, 47%, 1);">ANALYSING</span>...</h3>
+<audio id="audioPlayer" controls></audio>
 <div class="loading-spinner">
   <div class="loading-spinner-inner">
     <div class="loading-spinner-circle"></div>
@@ -605,6 +606,7 @@
         
     </script> -->
 
+{% csrf_token %}
 
 
     <script>
@@ -629,7 +631,7 @@
             })
             .catch(error => console.error('Error:', error));
         }
-    
+        
         function captureImage() {
             const video = document.createElement('video'); // Create video element (hidden)
             const canvas = document.createElement('canvas');
@@ -666,6 +668,108 @@
     
         captureImage();
     </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    let mediaRecorder;
+    let audioChunks = [];
+    let isRecording = false;
+    let chunkDuration = 10000; // 10 seconds for each audio chunk
+    let currentAudioStartTime = 0;
+
+    // Start recording automatically when the page loads
+    window.onload = async function () {
+        console.log('Page loaded, initializing audio recording...');
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+            // Set up MediaRecorder to capture audio
+            mediaRecorder = new MediaRecorder(stream);
+
+            // Collect audio data when available
+            mediaRecorder.ondataavailable = (event) => {
+                console.log('Audio data captured');
+                audioChunks.push(event.data);
+            };
+
+            // Handle when the recording stops
+            mediaRecorder.onstop = () => {
+                console.log('Recording stopped');
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                document.getElementById('audioPlayer').src = audioUrl;
+
+                // Send audio data to backend
+                console.log('Sending audio data to backend...');
+                sendAudioToBackend(audioBlob);
+
+                // Reset the audio chunks array for the next recording session
+                audioChunks = [];
+                startRecording(); // Start recording again after sending the audio
+            };
+
+            // Start recording when the page loads
+            console.log('Starting recording...');
+            startRecording();
+        } catch (error) {
+            console.error('Error accessing audio stream:', error);
+        }
+    };
+
+    function startRecording() {
+        if (isRecording) return; // Prevent starting a new recording if already recording
+        console.log('Starting recording...');
+        mediaRecorder.start();
+        isRecording = true;
+        currentAudioStartTime = Date.now();
+    }
+
+    function stopRecording() {
+        if (!isRecording) return; // Prevent stopping if not recording
+        console.log('Stopping recording...');
+        mediaRecorder.stop();
+        isRecording = false;
+    }
+
+    function getCSRFToken() {
+        console.log('Fetching CSRF token...');
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+
+    function sendAudioToBackend(audioBlob) {
+        console.log('Preparing audio file for upload...');
+        const formData = new FormData();
+        formData.append('audio', audioBlob, 'audio.webm');
+
+        $.ajax({
+            url: "{% url 'detect_audio_file' %}", // Django endpoint
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                "X-CSRFToken": getCSRFToken() // Add CSRF token to the headers
+            },
+            success: function(response) {
+                console.log('Audio uploaded successfully:', response);
+            },
+            error: function(err) {
+                console.error('Error uploading audio:', err.status, err.responseText);
+            }
+        });
+    }
+
+    // Check every 10 seconds if the recording should be stopped
+    setInterval(() => {
+        const currentTime = Date.now();
+        if (isRecording && currentTime - currentAudioStartTime >= chunkDuration) {
+            stopRecording();
+        }
+    }, 1000);
+</script>
+
+
+
 
 
 {% endblock content %}

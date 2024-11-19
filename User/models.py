@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 class Emotion_analysis(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     emotion_label = models.CharField(max_length=10)
+    emotion_type = models.CharField(max_length=10, default=None, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)  # Automatically set when created
     updated_at = models.DateTimeField(auto_now=True) 
     emotion_status = models.BooleanField(default=True)

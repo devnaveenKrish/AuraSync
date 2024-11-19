@@ -15,6 +15,12 @@ import base64
 import io
 from .models import Emotion_analysis, User_Details, Feedback
 from django.contrib.auth.decorators import login_required
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+import speech_recognition as sr
+from pydub import AudioSegment
+import pickle
+
 
 
 def index(request):
@@ -35,7 +41,6 @@ def index(request):
 def trainer_dashboard(request):
     trainer = request.user.id
     users = User_Details.objects.filter(trainer=trainer)
-    print(users)
     return render(request,'Trainer/main/UserTable.html', {'users': users})
 
 # def user_login(request):
@@ -50,7 +55,6 @@ def trainer_dashboard(request):
 #             login(request, user)
 #             return redirect(index)  
 #         else:
-#             print(username, password)
 #             return render(request, 'User/auth/login.html', {'msg':'Oops! Our emotion detection model senses a bit of frustration. It seems the password got scrambled in your neurons. Give it another go!😉'})
 #     return render(request, 'User/auth/login.html')
 def user_login(request):
@@ -75,7 +79,6 @@ def user_login(request):
                 })
         else:
             # Failed authentication
-           print(username, password)
            return render(request, 'User/auth/login.html', {'msg':'Oops! Our emotion detection model senses a bit of frustration. It seems the password got scrambled in your neurons. Give it another go!😉'})
     
     return render(request, 'User/auth/login.html')
@@ -85,7 +88,6 @@ def user_logout(request):
     return redirect(index)
 
 def detail(request): 
-    print("Yes")
     return render(request,'User/auth/additional_Details.html')
 
 def singup(request):
@@ -145,12 +147,15 @@ def Analysis_page(request, user_id):
         .annotate(count=Count('emotion_label'))
         .order_by('-count')
     )
-    print("Emotion_count : ",emotion_counts)
+    speech_emotions = (
+        Emotion_analysis.objects
+        .filter(user=user, created_at__date = current_date, emotion_type='Speech')
+        .values('emotion_label')
+        .annotate(count=Count('emotion_label'))
+        .order_by('-count')
+    )
+    print(speech_emotions)
     all_emotions = Emotion_analysis.objects.filter(user = user).values('emotion_label').annotate(count=Count('emotion_label')).order_by('-count')
-    print("All emotions : ",all_emotions)
-    print("Emotion_count : ",emotion_counts)
-    all_emotions = Emotion_analysis.objects.filter(user = user).values('emotion_label').annotate(count=Count('emotion_label')).order_by('-count')
-    print("All emotions : ",all_emotions)
     total_emotion_count = Emotion_analysis.objects.filter(user=user, created_at__date = current_date).values('emotion_label').count()
     Highcharts_data = list(emotion_counts)
     return render(request, 'User/analysis/user_report.html', {'user' : user, 'user_details' : user_details, 'Highcharts_data': Highcharts_data, 'total_emotion_count': total_emotion_count, 'all_emotions' : all_emotions})
@@ -169,7 +174,7 @@ def trainer_assign(request, trainer_id):
 
 def trainer_disallocate(request, user_id):
     users = User_Details.objects.filter(id = user_id).first()
-    print(f'User id : {user_id} | user name : {users}')
+    
     users.trainer = None
     users.save()
     return redirect('trainer_dashboard')
@@ -244,7 +249,7 @@ def detect_facial_emotion(request):
             emotion_status = True
 
             # Save emotion to database (your existing functionality)
-            emotion_data = Emotion_analysis.objects.create(user=user, emotion_label=emotion_label, emotion_status=emotion_status)
+            emotion_data = Emotion_analysis.objects.create(user=user, emotion_label=emotion_label, emotion_type='Facial', emotion_status=emotion_status)
             emotion_data.save()
 
             # Save the image with emotion and user ID as filename
@@ -258,5 +263,77 @@ def detect_facial_emotion(request):
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-        
+def convert_to_wav(input_path, output_path):
+    audio = AudioSegment.from_file(input_path)
+    audio.export(output_path, format="wav")
 
+def convert_speech_to_text(audio_path):
+    recognizer = sr.Recognizer()
+    with sr.AudioFile(audio_path) as source:
+        audio_data = recognizer.record(source)
+    try:
+        return recognizer.recognize_google(audio_data)
+    except sr.UnknownValueError:
+        raise ValueError("Speech Recognition could not understand the audio.")
+    except sr.RequestError as e:
+        raise ValueError(f"Speech Recognition service error: {str(e)}")
+
+def detect_audio_file(request):
+    user = request.user
+    if request.method == 'POST' and request.FILES.get('audio'):
+        audio_file = request.FILES['audio']
+        print(audio_file)
+
+        # Validate file type
+        if not audio_file.content_type.startswith("audio") and not audio_file.name.endswith('.webm'):
+            print("Audio not in webm")
+            return JsonResponse({'error': 'Invalid file type. Please upload an audio file.'}, status=400)
+
+        # Save uploaded file
+        file_name = 'upload_audio/uploaded_audio.webm'
+        print("File name")
+        file_path = default_storage.save(file_name, audio_file)
+        print("File path")
+        audio_path = os.path.join(default_storage.location, file_path)
+        print("Audio path")
+        print(audio_path)
+
+        try:
+            # Convert to WAV if necessary
+            if not audio_path.endswith('.wav'):
+                wav_audio_path = audio_path.replace(os.path.splitext(audio_path)[1], ".wav")
+                convert_to_wav(audio_path, wav_audio_path)
+                audio_path = wav_audio_path
+
+            # Transcribe audio to text
+            transcribed_text = convert_speech_to_text(audio_path)
+            pickle_file = "/Volumes/Personal Drive/Git/AuraSync/Model Building/Emotion_classification_model.pkl"
+
+            with open(pickle_file, 'rb') as file:
+                model = pickle.load(file)
+
+            emotion_label = model.predict([transcribed_text])
+            if emotion_label == 'joy':
+                emotion_label = 'happy'
+            elif emotion_label == 'sadness':
+                emotion_label = 'sad'
+
+            emotion_status = True
+
+            emotion_data = Emotion_analysis.objects.create(user=user, emotion_label=emotion_label, emotion_type='Speech', emotion_status=emotion_status)
+            emotion_data.save()
+
+
+            # Perform additional processing (e.g., emotion detection)
+            # detected_emotion = detect_emotion_from_text(transcribed_text)
+
+            # Clean up temporary files
+            default_storage.delete(file_path)
+            return JsonResponse({'transcribed_text': transcribed_text}, status=200)
+
+        except ValueError as e:
+            return JsonResponse({'error': str(e)}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': f'Unexpected error: {str(e)}'}, status=500)
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
