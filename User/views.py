@@ -154,11 +154,11 @@ def Analysis_page(request, user_id):
         .annotate(count=Count('emotion_label'))
         .order_by('-count')
     )
-    print(speech_emotions)
     all_emotions = Emotion_analysis.objects.filter(user = user).values('emotion_label').annotate(count=Count('emotion_label')).order_by('-count')
     total_emotion_count = Emotion_analysis.objects.filter(user=user, created_at__date = current_date).values('emotion_label').count()
     Highcharts_data = list(emotion_counts)
-    return render(request, 'User/analysis/user_report.html', {'user' : user, 'user_details' : user_details, 'Highcharts_data': Highcharts_data, 'total_emotion_count': total_emotion_count, 'all_emotions' : all_emotions})
+    speech_emotions = list(speech_emotions)
+    return render(request, 'User/analysis/user_report.html', {'user' : user, 'user_details' : user_details, 'Highcharts_data': Highcharts_data, 'total_emotion_count': total_emotion_count, 'all_emotions' : all_emotions, 'speech_emotions' : speech_emotions})
 
 def trainer(request):
     trainers = User_Details.objects.filter(user_type="trainer")
@@ -251,6 +251,7 @@ def detect_facial_emotion(request):
             # Save emotion to database (your existing functionality)
             emotion_data = Emotion_analysis.objects.create(user=user, emotion_label=emotion_label, emotion_type='Facial', emotion_status=emotion_status)
             emotion_data.save()
+            print("Facial Emotion Label : ", emotion_label)
 
             # Save the image with emotion and user ID as filename
             save_image(img, user.id, emotion)  # Save image
@@ -268,9 +269,11 @@ def convert_to_wav(input_path, output_path):
     audio.export(output_path, format="wav")
 
 def convert_speech_to_text(audio_path):
+    print("Conversion reached")
     recognizer = sr.Recognizer()
     with sr.AudioFile(audio_path) as source:
         audio_data = recognizer.record(source)
+        print(audio_data)
     try:
         return recognizer.recognize_google(audio_data)
     except sr.UnknownValueError:
@@ -279,44 +282,49 @@ def convert_speech_to_text(audio_path):
         raise ValueError(f"Speech Recognition service error: {str(e)}")
 
 def detect_audio_file(request):
+    print("Reached!")
     user = request.user
     if request.method == 'POST' and request.FILES.get('audio'):
         audio_file = request.FILES['audio']
-        print(audio_file)
+        print("Audio file")
 
         # Validate file type
         if not audio_file.content_type.startswith("audio") and not audio_file.name.endswith('.webm'):
-            print("Audio not in webm")
             return JsonResponse({'error': 'Invalid file type. Please upload an audio file.'}, status=400)
 
         # Save uploaded file
         file_name = 'upload_audio/uploaded_audio.webm'
-        print("File name")
         file_path = default_storage.save(file_name, audio_file)
-        print("File path")
         audio_path = os.path.join(default_storage.location, file_path)
         print("Audio path")
-        print(audio_path)
+        
 
         try:
             # Convert to WAV if necessary
             if not audio_path.endswith('.wav'):
                 wav_audio_path = audio_path.replace(os.path.splitext(audio_path)[1], ".wav")
+                print("Audio path : ", audio_path)
+                print("Wav path = ", wav_audio_path)
                 convert_to_wav(audio_path, wav_audio_path)
                 audio_path = wav_audio_path
+                print("Conersion", audio_path)
 
             # Transcribe audio to text
+            print("Going to trascribe")
             transcribed_text = convert_speech_to_text(audio_path)
+            print("Transcripted Text : ", transcribed_text)
             pickle_file = "/Volumes/Personal Drive/Git/AuraSync/Model Building/Emotion_classification_model.pkl"
 
             with open(pickle_file, 'rb') as file:
                 model = pickle.load(file)
-
+            print("Print model : ", model)
             emotion_label = model.predict([transcribed_text])
             if emotion_label == 'joy':
                 emotion_label = 'happy'
             elif emotion_label == 'sadness':
                 emotion_label = 'sad'
+
+            print("Speech emotion label : ", emotion_label)
 
             emotion_status = True
 

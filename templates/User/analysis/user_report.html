@@ -1,3 +1,4 @@
+
 {% load static %}
 <html>
     <head>
@@ -260,6 +261,8 @@
     margin: 0.3rem 10px;
 }
 
+
+
     </style>
 
         <style>
@@ -320,7 +323,7 @@
                             <p class="highcharts-description">
                                 This graph shows the amount of the user's emotion. The different bars in the graphs represents different emotions as mentioned below each of them.
                             </p>
-                        </figure>
+                    </figure>
                 </container>
 
                 <container>
@@ -333,17 +336,40 @@
                     </figure>
                 </container>
 
+                <container>
+                    <center><h3 style="color:white;"> Overall Speech Emotion Analysis </h3></center>
+                    <figure class="highcharts-figure">
+                        <div id="speech_bar"></div>
+                            <p class="highcharts-description">
+                                This 3D column chart shows the  overall speech emotion behaviour of the user. Each label under x-axis shows the emotion label.
+                            </p>
+                    <figure>
+                <container>
 
 
-            <center><h3 style="color:white;"> Overall Emotion Analysis </h3></center>
-                <figure class="highcharts-figure">
-                    <div id="container3"></div>
-                        <p class="highcharts-description">
-                            This 3D column chart shows the  overall emotion behaviour of the user. Each label under x-axis shows the emotion label.
-                        </p>
-                <figure>
+                <container>
+                    <center><h3 style="color:white;">Today's Speech emotions propotion</h3></center>
+                    <figure class="highcharts-figure">
+                        <div id="speech_proposion"></div>
+                            <p class="highcharts-description">
+                                    This pie chart shows the proposion of the user emotion in percentages.
+                            </p>
+                    </figure>
+                </container>
+
+                <container>
+                    <center><h3 style="color:white;"> Overall Emotion Analysis </h3></center>
+                    <figure class="highcharts-figure">
+                        <div id="container3"></div>
+                            <p class="highcharts-description">
+                                This 3D column chart shows the  overall emotion behaviour of the user. Each label under x-axis shows the emotion label.
+                            </p>
+                    <figure>
+                <container>
 <br>
 <br>
+
+
                 <center><button class="next-btn" id="printDownloadBtn">Print & Download PDF</button></center>
 
 
@@ -626,6 +652,175 @@ showValues();
             }, 1000); // 1-second delay to prevent print dialog interruption
         });
     </script>
+
+    <script>
+
+        Highcharts.chart('speech_bar', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                align: 'left',
+                text: 'Total Emotion Analysis'
+            },
+
+            accessibility: {
+                announceNewData: {
+                    enabled: true
+                }
+            },
+            xAxis: {
+                type: 'category'
+            },
+            yAxis: {
+                title: {
+                    text: 'Total Count of daily emotion.'
+                }
+        
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.y:.1f}'
+                    }
+                }
+            },
+        
+            tooltip: {
+                headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                pointFormat: '<span style="color:{point.color}">{point.name}</span>: ' +
+                    '<b>{point.y:.2f}%</b> of total<br/>'
+            },
+        
+            series: [
+                {
+                    
+                    name: 'Emotions',
+                    colorByPoint: true,
+                    data: [
+                    {% for emotion in speech_emotions %}
+                        {
+                            name: '{{ emotion.emotion_label }}',
+                            y: {{ emotion.count }},
+                            drilldown: '{{ emotion.emotion_label }}'
+                        }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                        // {
+                        //     name: 'Safari',
+                        //     y: 19.84,
+                        //     drilldown: 'Safari'
+                        // },
+                        // {
+                        //     name: 'Firefox',
+                        //     y: 4.18,
+                        //     drilldown: 'Firefox'
+                        // },
+                        // {
+                        //     name: 'Edge',
+                        //     y: 4.12,
+                        //     drilldown: 'Edge'
+                        // },
+                        // {
+                        //     name: 'Opera',
+                        //     y: 2.33,
+                        //     drilldown: 'Opera'
+                        // },
+                        // {
+                        //     name: 'Internet Explorer',
+                        //     y: 0.45,
+                        //     drilldown: 'Internet Explorer'
+                        // },
+                        // {
+                        //     name: 'Other',
+                        //     y: 1.582,
+                        //     drilldown: null
+                        // }
+                    ]
+                }
+            ]
+        });
+        </script>
+
+<script>
+    Highcharts.chart("speech_proposion", {
+  chart: {
+    type: "pie",
+  },
+  title: {
+    text: "Emotion propotion",
+  },
+  tooltip: {
+    valueSuffix: "%",
+  },
+  subtitle: {
+    text: "Today's Report",
+  },
+  plotOptions: {
+    series: {
+      allowPointSelect: true,
+      cursor: "pointer",
+      dataLabels: [
+        {
+          enabled: true,
+          distance: 20,
+        },
+        {
+          enabled: true,
+          distance: -40,
+          format: "{point.percentage:.1f}%",
+          style: {
+            fontSize: "1.2em",
+            textOutline: "none",
+            opacity: 0.7,
+          },
+          filter: {
+            operator: ">",
+            property: "percentage",
+            value: 10,
+          },
+        },
+      ],
+    },
+  },
+  series: [
+    {
+      name: "Percentage",
+      colorByPoint: true,
+      data: [
+        {% for emotion in speech_emotions %}
+            {
+                name: '{{ emotion.emotion_label }}',
+                y: {{ emotion.count }}/{{ total_emotion_count }},
+                }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+        // {
+        //   name: "Fat",
+        //   sliced: true,
+        //   selected: true,
+        //   y: 26.71,
+        // },
+        // {
+        //   name: "Carbohydrates",
+        //   y: 1.09,
+        // },
+        // {
+        //   name: "Protein",
+        //   y: 15.5,
+        // },
+        // {
+        //   name: "Ash",
+        //   y: 1.68,
+        // },
+      ],
+    },
+  ],
+})
+</script>
         
 
 

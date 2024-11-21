@@ -41,7 +41,7 @@ def psychometric_questions(request):
             response_status=True  # Or any logic to update response_status if needed
         )
 
-        return redirect('thank_you')  # Redirect to a 'thank you' or results page after submission
+        return redirect('psychometric')  # Redirect to a 'thank you' or results page after submission
 
     # Fetch all psychometric questions from the database
     questions = psychometric_question.objects.all()

@@ -41,7 +41,7 @@
                                 Login
                             </a>
                         {% else %}
-                            <a class=" btn btn--stroke s-intro__more-btn" href="{% url 'analysis' %}">
+                            <a class=" btn btn--stroke s-intro__more-btn" href="{% url 'analysis' %}" onclick="alert('By clicking ok, you are agreeing with out privacy policies. The images and audio captured will not be shared or stored anywhere else. Your data will only be used for the continues learning of the system only.')">
                                 Take me to the Magic
                             </a>
                             <a class=" btn btn--stroke s-intro__more-btn" href="{% url 'psychometric' %}">
@@ -200,7 +200,7 @@
 
                     </div> <!-- end services-list -->
                     
-                </div> <!-- end services-content -->   			
+                </div> <!-- end services-content -->   	
 
             </section> <!-- end services -->
 
